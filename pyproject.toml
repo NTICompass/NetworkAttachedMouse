@@ -3,5 +3,12 @@ name = "NetworkAttachedMouse"
 version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = [
+    "pynput>=1.8.2",
     "pyserial>=3.5",
+    "pyserial-asyncio>=0.6",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff==0.15.19",
 ]
