@@ -8,18 +8,23 @@ import serial_asyncio
 from asyncio import Protocol
 
 def init[T:Protocol](factory: type[T]) -> Coroutine[Any, Any, tuple[SerialTransport, T]]:
-    return serial_asyncio.create_serial_connection(
-        loop,
-        factory,
-        'COM7',
-        baudrate=1200,
-        bytesize=serial.SEVENBITS,
-        parity=serial.PARITY_NONE,
-        stopbits=serial.STOPBITS_ONE,
-    )
+    opts = {
+        'baudrate':1200,
+        'bytesize':serial.SEVENBITS,
+        'parity':serial.PARITY_NONE,
+        'stopbits': serial.STOPBITS_ONE,
+    }
+
+    # 'COM7', **opts
+    return serial_asyncio.create_serial_connection(loop, factory, 'socket://192.168.1.123:3008')
 
 if __name__ == '__main__':
     loop = asyncio.new_event_loop()
     transport, protocol = loop.run_until_complete(init(Decoder))
-    loop.run_forever()
-    loop.close()
+
+    try:
+        loop.run_forever()
+    except KeyboardInterrupt:
+        print('Exit')
+    finally:
+        loop.close()
