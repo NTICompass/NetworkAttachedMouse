@@ -31,9 +31,7 @@ if __name__ == '__main__':
             ).start()
             loop.run_forever()
         except KeyboardInterrupt:
-            print('Exit')
             loop.stop()
-        finally:
-            loop.close()
     finally:
+        print('Exiting')
         loop.close()
