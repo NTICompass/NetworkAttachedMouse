@@ -13,8 +13,7 @@ NetMouse.exe --microsoft --com=COM7
 uv sync
 uv run main.py --microsoft --ip=192.168.1.2 --port=3008
 ```
-[![Serial mouse attached to a terminal server](https://my.computers.pictures/file/genEricComputers/NetworkAttachedMouse/P_20260621_183113.jpg)](
-https://my.computers.pictures/file/genEricComputers/NetworkAttachedMouse/NetMouse_Demo.mp4)
+[![Serial mouse attached to a terminal server](https://my.computers.pictures/file/genEricComputers/NetworkAttachedMouse/P_20260621_183113.jpg)](#video-demo)
 (Note: Click picture for video demo)
 
 ## Backstory
@@ -92,6 +91,10 @@ So, thanks to [@reconbot](https://github.com/reconbot) (also https://roborooter.
 
 Basing my code off of his (https://github.com/reconbot/serial-mouse-parser/blob/master/lib/stream.ts), and using [pynput](https://github.com/moses-palmer/pynput) (so I don't need to call win32 APIs manually), I got to work and was able to make a basic mouse driver that reads/decodes the packets
 from the mouse and moves the cursor on the screen.
+
+## Video Demo
+
+https://github.com/user-attachments/assets/af5b52e5-3643-4e51-9e2f-417e81ce9cb0
 
 [^1]: Should also work on MacOS and Linux, but I only tested it on Windows.
 [^2]: This terminal server only has RJ-45 ports, according to the docs the pinout matches that of a Cisco console/rollover cable.
