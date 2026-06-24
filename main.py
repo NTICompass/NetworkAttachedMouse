@@ -1,13 +1,16 @@
+from collections.abc import Coroutine
+from typing import Any
+from serial_asyncio import SerialTransport
 from sermouse.decoder import Decoder
 import asyncio
 import serial
 import serial_asyncio
+from asyncio import Protocol
 
-if __name__ == '__main__':
-    loop = asyncio.new_event_loop()
-    port = serial_asyncio.create_serial_connection(
+def init[T:Protocol](factory: type[T]) -> Coroutine[Any, Any, tuple[SerialTransport, T]]:
+    return serial_asyncio.create_serial_connection(
         loop,
-        Decoder,
+        factory,
         'COM7',
         baudrate=1200,
         bytesize=serial.SEVENBITS,
@@ -15,6 +18,8 @@ if __name__ == '__main__':
         stopbits=serial.STOPBITS_ONE,
     )
 
-    transport, protocol = loop.run_until_complete(port)
+if __name__ == '__main__':
+    loop = asyncio.new_event_loop()
+    transport, protocol = loop.run_until_complete(init(Decoder))
     loop.run_forever()
     loop.close()
