@@ -13,7 +13,9 @@ NetMouse.exe --microsoft --com=COM7
 uv sync
 uv run main.py --microsoft --ip=192.168.1.2 --port=3008
 ```
-![Serial mouse attached to a terminal server](https://my.computers.pictures/file/genEricComputers/NetworkAttachedMouse/P_20260621_183113.jpg)
+[![Serial mouse attached to a terminal server](https://my.computers.pictures/file/genEricComputers/NetworkAttachedMouse/P_20260621_183113.jpg)](
+https://my.computers.pictures/file/genEricComputers/NetworkAttachedMouse/NetMouse_Demo.mp4)
+(Note: Click picture for video demo)
 
 ## Backstory
 
