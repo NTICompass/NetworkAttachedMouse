@@ -6,9 +6,12 @@ A serial mouse driver capable of connecting to a serial mouse over the network v
 **TL;DR**: A python script to connect to a network port (or COM port) and let you use a serial mouse on Windows[^1].
 
 ```cmd
-python main.py --microsoft --ip=192.168.1.2 --port=3008
-# or
 NetMouse.exe --microsoft --ip=192.168.1.2 --port=3008
+# or
+NetMouse.exe --microsoft --com=COM7
+# or
+uv sync
+uv run main.py --microsoft --ip=192.168.1.2 --port=3008
 ```
 ![Serial mouse attached to a terminal server](https://my.computers.pictures/file/genEricComputers/NetworkAttachedMouse/P_20260621_183113.jpg)
 
@@ -70,6 +73,25 @@ There's no way to manually enable it on a arbitrary COM port, at least I couldn'
 
 So, I gave in and decided to make my own driver for the mouse.
 
+## Serial mouse decoder
+
+Fine, I'll make my own decoder[^3].  I just need to understand what the (binary) I'm getting from the mouse means and how to decode it.
+Good thing I found some helpful info about that from searching the web!
+
+Links:
+ - https://www.ardent-tool.com/mouse/How_They_Run.html
+ - https://roborooter.com/post/serial-mice/
+
+This doesn't seem too complicated.  The mouse sends 3-byte packets, which each bit having a specific meaning - including that meaning being "unused".
+So, just grab bytes as they come in, and after every 3, decode that packet.
+
+While I could just start totally from scratch, using only the description of how the packets work, I could also adapt code that's already been written.
+So, thanks to [@reconbot](https://github.com/reconbot) (also https://roborooter.com/post/serial-mouse-project/) for doing the hard work for me!
+
+Basing my code off of his (https://github.com/reconbot/serial-mouse-parser/blob/master/lib/stream.ts), and using [pynput](https://github.com/moses-palmer/pynput) (so I don't need to call win32 APIs manually), I got to work and was able to make a basic mouse driver that reads/decodes the packets
+from the mouse and moves the cursor on the screen.
+
 [^1]: Should also work on MacOS and Linux, but I only tested it on Windows.
 [^2]: This terminal server only has RJ-45 ports, according to the docs the pinout matches that of a Cisco console/rollover cable.
       I do have one of those, but I used a generic RJ-45 to DB-25 adapter to make my own.
+[^3]: I am a professional PHP and JavaScript (TypeScript) developer and I am still learning python and currently only use it for fun/hobbies.
