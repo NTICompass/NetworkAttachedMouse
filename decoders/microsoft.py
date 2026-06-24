@@ -1,5 +1,6 @@
-import asyncio
-from pynput.mouse import Button, Controller
+from decoders.basedecoder import BaseDecoder
+from pynput.mouse import Button
+import serial
 
 start_marker = 0b01000000
 left_button = 0b00100000
@@ -17,24 +18,20 @@ def twos_comp(val: int, bits: int) -> int:
     return val  # return positive value as is
 
 
-class Decoder(asyncio.Protocol):
+class Microsoft(BaseDecoder):
     """
-    Microsoft serial sermouse packet decoder
+    Microsoft serial decoders packet decoder
 
     With thanks to: https://roborooter.com/post/serial-mice/ and https://roborooter.com/post/serial-mouse-project/
 
     Also see: https://www.ardent-tool.com/mouse/How_They_Run.html
     """
-    transport: asyncio.ReadTransport
-    mouse = Controller()
-    _state = {
-        'left': False,
-        'right': False
+    options = {
+        'baudrate': 1200,
+        'bytesize': serial.SEVENBITS,
+        'parity': serial.PARITY_NONE,
+        'stopbits': serial.STOPBITS_ONE,
     }
-    _packet = bytearray()
-
-    def connection_made(self, transport: asyncio.ReadTransport):
-        self.transport = transport
 
     def data_received(self, data):
         for byte in data:
@@ -52,7 +49,7 @@ class Decoder(asyncio.Protocol):
         if len(self._packet) != 3:
             return
 
-        self.__debug()
+        self._debug()
 
         left = (self._packet[0] & left_button) == left_button
         right = (self._packet[0] & right_button) == right_button
@@ -80,6 +77,3 @@ class Decoder(asyncio.Protocol):
         if x != 0 or y != 0:
             #print('move', x, y)
             self.mouse.move(x, y)
-
-    def __debug(self):
-        print('packet received', ' '.join('{:02x}'.format(c) for c in self._packet))
