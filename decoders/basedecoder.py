@@ -17,7 +17,7 @@ class MouseState(TypedDict):
     middle: NotRequired[bool]
 
 
-class BaseDecoder[T:ReadTransport](Protocol, ABC):
+class BaseDecoder[T: ReadTransport](Protocol, ABC):
     options: ClassVar[SerialOptions]
     transport: T
     mouse: Controller

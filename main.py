@@ -1,20 +1,17 @@
-from collections.abc import Coroutine
 from decoders.basedecoder import BaseDecoder
 from decoders.microsoft import Microsoft
 from pynput.keyboard import Listener, Key
 from serial.serialutil import SerialException
 from serial_asyncio import SerialTransport
-from typing import Any
 import argparse
 import asyncio
 import serial_asyncio
 import sys
 
 
-def init[T: BaseDecoder](factory: type[T], conn: str) -> Coroutine[Any, Any, tuple[SerialTransport, T]]:
+async def init[T: BaseDecoder](factory: type[T], conn: str) -> tuple[SerialTransport, T]:
     opts = {'timeout': 5} if conn.startswith('socket://') else factory.options
-
-    return serial_asyncio.create_serial_connection(loop, factory, conn, **opts)
+    return await serial_asyncio.create_serial_connection(loop, factory, conn, **opts)
 
 
 if __name__ == '__main__':
