@@ -11,7 +11,7 @@ import sys
 
 async def init[T: BaseDecoder](factory: type[T], conn: str) -> tuple[SerialTransport, T]:
     opts = {'timeout': 5} if conn.startswith('socket://') else factory.options
-    return await serial_asyncio.create_serial_connection(loop, factory, conn, **opts)
+    return await serial_asyncio.create_serial_connection(asyncio.get_running_loop(), factory, conn, **opts)
 
 
 if __name__ == '__main__':
@@ -40,24 +40,32 @@ if __name__ == '__main__':
         parser.print_help()
         sys.exit()
 
+    key_listen: Listener | None = None
     loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
 
     try:
         print('Connecting to serial mouse...')
         transport, protocol = loop.run_until_complete(init(Microsoft, conn_port))
     except SerialException as e:
         print(e)
-        loop.stop()
     else:
         try:
             print('Connected!')
             print('Press ESC to exit')
-            Listener(
+            key_listen = Listener(
                 on_press=lambda key: loop.stop() if key == Key.esc else None
-            ).start()
+            )
+
+            if key_listen is not None:
+                key_listen.start()
+
             loop.run_forever()
         except KeyboardInterrupt:
             loop.stop()
     finally:
         print('Exiting')
         loop.close()
+
+        if key_listen is not None:
+            key_listen.stop()
