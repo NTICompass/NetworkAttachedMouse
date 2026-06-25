@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
-from asyncio import Protocol, ReadTransport
+from asyncio import Protocol
 from pynput.mouse import Controller
+from serial_asyncio import SerialTransport
 from typing import ClassVar, TypedDict, NotRequired, final
 
 
@@ -17,15 +18,15 @@ class MouseState(TypedDict):
     middle: NotRequired[bool]
 
 
-class BaseDecoder[T: ReadTransport](Protocol, ABC):
+class BaseDecoder(Protocol, ABC):
     options: ClassVar[SerialOptions]
-    transport: T
+    transport: SerialTransport
     mouse: Controller
     _state: MouseState
     _packet: bytearray
 
     @final
-    def connection_made(self, transport: T):
+    def connection_made(self, transport: SerialTransport):
         self.transport = transport
         self.mouse = Controller()
 
