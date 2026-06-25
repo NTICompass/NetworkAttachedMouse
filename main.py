@@ -10,12 +10,12 @@ import asyncio
 import serial_asyncio
 import sys
 
+
 def init[T: BaseDecoder](factory: type[T], conn: str) -> Coroutine[Any, Any, tuple[SerialTransport, T]]:
-    opts = {
-        'timeout': 5
-    } if conn.startswith('socket://') else factory.options
+    opts = {'timeout': 5} if conn.startswith('socket://') else factory.options
 
     return serial_asyncio.create_serial_connection(loop, factory, conn, **opts)
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

@@ -1,5 +1,6 @@
 from decoders.basedecoder import BaseDecoder
 from pynput.mouse import Button
+from typing import override
 import serial
 
 start_marker = 0b01000000
@@ -33,6 +34,7 @@ class Microsoft(BaseDecoder):
         'stopbits': serial.STOPBITS_ONE,
     }
 
+    @override
     def data_received(self, data):
         for byte in data:
             if (byte & start_marker) == start_marker and len(self._packet) > 0:

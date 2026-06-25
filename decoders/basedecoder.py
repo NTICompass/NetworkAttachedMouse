@@ -1,23 +1,42 @@
+from abc import ABC, abstractmethod
 from asyncio import Protocol, ReadTransport
 from pynput.mouse import Controller
-from typing import ClassVar
+from typing import ClassVar, TypedDict, NotRequired, final
 
 
-class BaseDecoder(Protocol):
-    options: ClassVar[dict[str, int | str]]
-    transport: ReadTransport
-    mouse = Controller()
-    _state = {
-        'left': False,
-        'right': False
-    }
-    _packet = bytearray()
+class SerialOptions(TypedDict):
+    baudrate: int
+    bytesize: int
+    parity: str
+    stopbits: int
 
-    def connection_made(self, transport: ReadTransport):
+
+class MouseState(TypedDict):
+    left: bool
+    right: bool
+    middle: NotRequired[bool]
+
+
+class BaseDecoder[T:ReadTransport](Protocol, ABC):
+    options: ClassVar[SerialOptions]
+    transport: T
+    mouse: Controller
+    _state: MouseState
+    _packet: bytearray
+
+    @final
+    def connection_made(self, transport: T):
         self.transport = transport
+        self.mouse = Controller()
 
-    def data_received(self, data):
-        raise NotImplementedError
+        self._state = {
+            'left': False,
+            'right': False
+        }
+        self._packet = bytearray()
+
+    @abstractmethod
+    def data_received(self, data): ...
 
     def _debug(self):
         print('packet received', ' '.join('{:02x}'.format(c) for c in self._packet))
