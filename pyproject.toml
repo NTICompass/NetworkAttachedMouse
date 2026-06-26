@@ -24,6 +24,7 @@ package = true
 [tool.poe.tasks]
 build = """
     pyinstaller
+    --collect-submodules serial
     --onefile
     --name=NetMouse
     main.py
